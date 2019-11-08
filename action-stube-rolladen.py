@@ -31,7 +31,7 @@ def msg_links_up(hermes, intentMessage):
     conf = read_configuration_file(CONFIG_INI)
     
     ws = create_connection("ws://192.168.178.102:8080")
-    ws.send("Update GA:01_0_002=1")
+    ws.send("Update GA:01_0_002=0")
     #result =  ws.recv()
     ws.close()
 
@@ -48,7 +48,7 @@ def msg_links_down(hermes, intentMessage):
     conf = read_configuration_file(CONFIG_INI)
     
     ws = create_connection("ws://192.168.178.102:8080")
-    ws.send("Update GA:01_0_002=0")
+    ws.send("Update GA:01_0_002=1")
     ws.close()
 
     if len(intentMessage.slots.house_room) > 0:
