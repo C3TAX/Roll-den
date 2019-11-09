@@ -126,6 +126,24 @@ def msg_fenster_down(hermes, intentMessage):
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, result_sentence)
     
+def msg_schlafen_down(hermes, intentMessage):
+    conf = read_configuration_file(CONFIG_INI)
+    
+    ws = create_connection("ws://192.168.178.102:8080")
+    ws.send("Update GA:01_0_006=1")
+    ws.send("Update GA:01_0_002=1")
+    ws.send("Update GA:01_0_004=1")
+    ws.close()
+
+    if len(intentMessage.slots.house_room) > 0:
+        house_room = intentMessage.slots.house_room.first().value # We extract the value from the slot "house_room"
+        result_sentence = "Das Licht wird in {} ausgeschaltet".format(str(house_room))  # The response that will be said out loud by the TTS engine.
+    else:
+        result_sentence = "alle runter"
+
+    current_session_id = intentMessage.session_id
+    hermes.publish_end_session(current_session_id, result_sentence)
+    
 if __name__ == "__main__":
     mqtt_opts = MqttOptions()
     with Hermes(mqtt_options=mqtt_opts) as h:
@@ -135,4 +153,5 @@ if __name__ == "__main__":
         h.subscribe_intent("cetax:rechts_down", msg_rechts_down)
         h.subscribe_intent("cetax:fenster_up", msg_fenster_up)
         h.subscribe_intent("cetax:fenster_down", msg_fenster_down)
+        h.subscribe_intent("cetax:schlafen_down", msg_schlafen_down)
         h.start()
